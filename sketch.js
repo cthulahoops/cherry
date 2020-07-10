@@ -1,5 +1,14 @@
-function randomRange(a, b) {
+function randomUniform(a, b) {
   return a + Math.random() * (b - a);
+}
+
+function randomNormal(mean, sd) {
+  u1 = Math.random();
+  u2 = Math.random();
+
+  z0 = sqrt(-2.0 * log(u1)) * cos(2 * PI * u2)
+
+  return z0 * sd + mean;
 }
 
 function setup() {
@@ -11,8 +20,7 @@ function setup() {
 function draw() {
   background(202, 179, 136);
   colorMode(HSB, 360, 100, 100, 100);
-//  rect(200, 200, 30, 100);
-  
+
   translate(windowWidth / 2, 700);
   fill(0);
   branch(100, 40, 0);
@@ -20,7 +28,7 @@ function draw() {
 
 function branch(length, thickness, angle) {
   if (length < 20) {
-   return 
+   return
   }
   push();
   rotate(angle);
@@ -31,7 +39,7 @@ function branch(length, thickness, angle) {
     thickness / 2, 0,
     0, 0
   );
-  
+
   if (thickness > 8) {
     fill(255);
     quad(
@@ -41,20 +49,19 @@ function branch(length, thickness, angle) {
       -thickness / 2, 0
     );
   }
-    
+
   if (thickness < 15) {
-   blossom(length); 
+   blossom(length);
   }
   translate(0, -length);
-  branch(randomRange(0.65, 0.95) * length, thickness * 0.7, randomRange(0.8, 1.2) * PI / 6);
-  branch(randomRange(0.65, 0.95) * length, thickness * 0.7, randomRange(0.8, 1.2) * -PI / 6); 
+  branch(randomUniform(0.7, 0.9) * length, thickness * 0.7, randomNormal(-PI / 6, 0.2));
+  branch(randomUniform(0.7, 0.9) * length, thickness * 0.7, randomNormal(PI / 6, 0.2));
   pop();
 }
-  
+
 function blossom(length) {
-  fill(randomRange(290, 310), randomRange(30,50), randomRange(85, 100), 40);
-  noStroke();
+  fill(randomUniform(290, 310), randomUniform(30,50), randomUniform(85, 100), 40);
   for (let i = 0; i < 30; i++) {
-    circle(randomRange(-20, 20), randomRange(-length, 0), randomRange(5, 10));
+    circle(randomUniform(-20, 20), randomUniform(-length, 0), randomUniform(5, 10));
   }
 }
