@@ -9,3 +9,8 @@ canvas {
 ul {
   list-style: none;
 }
+
+label {
+  display: inline-block;
+  width: 10em;
+}

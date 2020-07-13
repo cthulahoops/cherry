@@ -18,9 +18,12 @@ function randomNormal(prng, mean, sd) {
 }
 
 
-function addToList(list, element) {
+function addToList(list, text, element) {
   let li = createElement('li');
   li.parent(list);
+  let label = createElement('label', text);
+
+  label.parent(li);
   element.parent(li);
 }
 
@@ -35,14 +38,14 @@ function setup() {
   controls.position(0, 5)
 
   blossomPicker = createColorPicker(color(300, 55, 85));
-  addToList(controls, blossomPicker);
+  addToList(controls, 'Blossom colour', blossomPicker);
   blossomAmount = createSlider(0, 255, 60);
-  addToList(controls, blossomAmount);
+  addToList(controls, 'Blossom amount', blossomAmount);
   branchAngles = createSlider(0, 90, 30, 1);
-  addToList(controls, branchAngles);
+  addToList(controls, 'Branch angles', branchAngles);
   button = createButton('Regenerate');
   button.mousePressed(() => {seed = Math.random()});
-  addToList(controls, button);
+  addToList(controls, '', button);
 }
 
 let seed = Math.random();
