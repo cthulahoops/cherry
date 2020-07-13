@@ -2,6 +2,10 @@ function randomUniform(a, b) {
   return a + Math.random() * (b - a);
 }
 
+function randomSpread(mean, spread) {
+  return randomUniform(mean - spread, mean + spread);
+}
+
 function randomNormal(mean, sd) {
   u1 = Math.random();
   u2 = Math.random();
@@ -54,14 +58,33 @@ function branch(length, thickness, angle) {
    blossom(length);
   }
   translate(0, -length);
-  branch(randomUniform(0.7, 0.9) * length, thickness * 0.7, randomNormal(-PI / 6, 0.2));
-  branch(randomUniform(0.7, 0.9) * length, thickness * 0.7, randomNormal(PI / 6, 0.2));
+
+  branch_length_factor = 0.8;
+  branch_thick_factor = 0.7;
+  branch(
+    randomSpread(branch_length_factor, 0.1) * length,
+    branch_thick_factor * thickness,
+    randomNormal(-PI / 6, 0.15));
+  branch(
+    randomSpread(
+      branch_length_factor, 0.1) * length,
+      branch_thick_factor * thickness, randomNormal(PI / 6, 0.15));
   pop();
 }
 
 function blossom(length) {
-  fill(randomUniform(290, 310), randomUniform(30,50), randomUniform(85, 100), 40);
-  for (let i = 0; i < 30; i++) {
-    circle(randomUniform(-20, 20), randomUniform(-length, 0), randomUniform(5, 10));
+  blossom_patch(30, 0, 1.2, length);
+
+ // fill(randomUniform(290, 310), 10, 100, 10);
+ //  blossom_patch(10, 0.8, 1.2, length);
+}
+
+function blossom_patch(count, y0, y1, length) {
+  fill(randomSpread(300, 10), randomUniform(50, 60), randomUniform(85, 100), 40);
+  for (let i = 0; i < count; i++) {
+    let x = randomNormal(0, 10);
+    let y = randomUniform(0, y1);
+    let size = randomUniform(5, 10);
+    circle(x, (y - 1) * length, size);
   }
 }
