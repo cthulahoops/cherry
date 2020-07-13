@@ -1,28 +1,57 @@
-function randomUniform(a, b) {
-  return a + Math.random() * (b - a);
+// let blossomPicker;
+
+function randomUniform(prng, a, b) {
+  return a + prng.quick() * (b - a);
 }
 
-function randomSpread(mean, spread) {
-  return randomUniform(mean - spread, mean + spread);
+function randomSpread(prng, mean, spread) {
+  return randomUniform(prng, mean - spread, mean + spread);
 }
 
-function randomNormal(mean, sd) {
-  u1 = Math.random();
-  u2 = Math.random();
+function randomNormal(prng, mean, sd) {
+  u1 = prng.quick();
+  u2 = prng.quick();
 
-  z0 = sqrt(-2.0 * log(u1)) * cos(2 * PI * u2)
+  z0 = sqrt(-2.0 * log(u1)) * cos(360 * u2)
 
   return z0 * sd + mean;
 }
 
-function setup() {
-  createCanvas(windowWidth, windowHeight);
-  noLoop();
-  // frameRate(1);
-  noStroke();
+
+function addToList(list, element) {
+  let li = createElement('li');
+  li.parent(list);
+  element.parent(li);
 }
 
+function setup() {
+  createCanvas(windowWidth, windowHeight);
+//  noLoop();
+  frameRate(1);
+  noStroke();
+  colorMode(HSB, 360, 100, 100, 100);
+
+  let controls = createElement('ul')
+  controls.position(0, 5)
+
+  blossomPicker = createColorPicker(color(300, 55, 85));
+  addToList(controls, blossomPicker);
+  blossomAmount = createSlider(0, 255, 60);
+  addToList(controls, blossomAmount);
+  branchAngles = createSlider(0, 90, 30, 1);
+  addToList(controls, branchAngles);
+  button = createButton('Regenerate');
+  button.mousePressed(() => {seed = Math.random()});
+  addToList(controls, button);
+}
+
+let seed = Math.random();
+
 function draw() {
+  let prng = new Math.seedrandom(seed);
+  let blossomPrng = new Math.seedrandom(prng.quick());
+
+  angleMode(DEGREES);
   colorMode(RGB);
   background(202, 179, 136);
   colorMode(HSB, 360, 100, 100, 100);
@@ -31,10 +60,10 @@ function draw() {
   // Attempt to fit to 900 x 900.
   scale(min(windowWidth / 900, windowHeight / 900))
   fill(0);
-  branch(100, 40, 0);
+  branch(prng, blossomPrng, 100, 40, 0);
 }
 
-function branch(length, thickness, angle) {
+function branch(prng, blossomPrng, length, thickness, angle) {
   if (length < 20) {
    return
   }
@@ -59,36 +88,49 @@ function branch(length, thickness, angle) {
   }
 
   if (thickness < 15) {
-   blossom(length);
+   blossom(blossomPrng, length);
   }
   translate(0, -length);
+
+  angle = branchAngles.value()
 
   branch_length_factor = 0.8;
   branch_thick_factor = 0.7;
   branch(
-    randomSpread(branch_length_factor, 0.1) * length,
+    prng,
+    blossomPrng,
+    randomSpread(prng, branch_length_factor, 0.1) * length,
     branch_thick_factor * thickness,
-    randomNormal(-PI / 6, 0.15));
+    randomSpread(prng, -angle, angle / 3));
   branch(
-    randomSpread(
-      branch_length_factor, 0.1) * length,
-      branch_thick_factor * thickness, randomNormal(PI / 6, 0.15));
+    prng,
+    blossomPrng,
+    randomSpread(prng, branch_length_factor, 0.1) * length,
+    branch_thick_factor * thickness,
+    randomSpread(prng, angle, angle / 3));
   pop();
 }
 
-function blossom(length) {
-  blossom_patch(30, 0, 1.2, length);
+function blossom(prng, length) {
+  blossom_patch(prng, blossomAmount.value(), 0, 1.2, length);
 
  // fill(randomUniform(290, 310), 10, 100, 10);
  //  blossom_patch(10, 0.8, 1.2, length);
 }
 
-function blossom_patch(count, y0, y1, length) {
-  fill(randomSpread(300, 10), randomUniform(50, 60), randomUniform(85, 100), 40);
+function blossom_patch(prng, count, y0, y1, length) {
+  blossomColor = blossomPicker.color()
+  fill(
+    randomSpread(prng, hue(blossomColor), 10),
+    randomSpread(prng, saturation(blossomColor), 5),
+    randomSpread(prng, brightness(blossomColor), 10),
+    40
+  );
+  // randomSpread(300, 10), randomUniform(50, 60), randomUniform(85, 100), 40);
   for (let i = 0; i < count; i++) {
-    let x = randomNormal(0, 10);
-    let y = randomUniform(0, y1);
-    let size = randomUniform(5, 10);
+    let x = randomNormal(prng, 0, 10);
+    let y = randomUniform(prng, 0, y1);
+    let size = randomUniform(prng, 5, 10);
     circle(x, (y - 1) * length, size);
   }
 }
