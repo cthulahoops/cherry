@@ -39,10 +39,16 @@ function setup() {
 
   blossomPicker = createColorPicker(color(300, 55, 85));
   addToList(controls, 'Blossom colour', blossomPicker);
+
+  hueVariation = createSlider(0, 180, 10);
+  addToList(controls, 'Hue Variation', hueVariation);
+
   blossomAmount = createSlider(0, 255, 60);
   addToList(controls, 'Blossom amount', blossomAmount);
+
   branchAngles = createSlider(0, 90, 30, 1);
   addToList(controls, 'Branch angles', branchAngles);
+
   button = createButton('Regenerate');
   button.mousePressed(() => {seed = Math.random()});
   addToList(controls, '', button);
@@ -124,7 +130,7 @@ function blossom(prng, length) {
 function blossom_patch(prng, count, y0, y1, length) {
   blossomColor = blossomPicker.color()
   fill(
-    randomSpread(prng, hue(blossomColor), 10),
+    randomSpread(prng, hue(blossomColor), hueVariation.value()),
     randomSpread(prng, saturation(blossomColor), 5),
     randomSpread(prng, brightness(blossomColor), 10),
     40
