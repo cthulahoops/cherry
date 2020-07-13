@@ -49,14 +49,28 @@ function setup() {
   branchAngles = createSlider(0, 90, 30, 1);
   addToList(controls, 'Branch angles', branchAngles);
 
+  refreshEvery = createSlider(0, 60, 0);
+  addToList(controls, 'Refresh time', refreshEvery);
+
   button = createButton('Regenerate');
-  button.mousePressed(() => {seed = Math.random()});
+  button.mousePressed(() => {
+    seed = Math.random();
+    t = 0
+  });
   addToList(controls, '', button);
 }
 
 let seed = Math.random();
+let t = 0;
 
 function draw() {
+  if (refreshEvery.value() > 0 && t > refreshEvery.value()) {
+    seed = Math.random();
+    t = 0;
+  }
+  else {
+    t += 1;
+  }
   let prng = new Math.seedrandom(seed);
   let blossomPrng = new Math.seedrandom(prng.quick());
 
