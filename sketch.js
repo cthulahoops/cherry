@@ -18,14 +18,18 @@ function randomNormal(mean, sd) {
 function setup() {
   createCanvas(windowWidth, windowHeight);
   noLoop();
+  // frameRate(1);
   noStroke();
 }
 
 function draw() {
+  colorMode(RGB);
   background(202, 179, 136);
   colorMode(HSB, 360, 100, 100, 100);
 
-  translate(windowWidth / 2, 700);
+  translate(windowWidth / 2, 3 * windowHeight / 4);
+  // Attempt to fit to 900 x 900.
+  scale(min(windowWidth / 900, windowHeight / 900))
   fill(0);
   branch(100, 40, 0);
 }
