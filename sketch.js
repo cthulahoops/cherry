@@ -17,6 +17,9 @@ function randomNormal(prng, mean, sd) {
   return z0 * sd + mean;
 }
 
+function randomSign(prng) {
+  return prng.quick() < 0.5 ? -1 : 1;
+}
 
 function addToList(list, text, element) {
   let li = createElement('li');
@@ -37,7 +40,8 @@ function setup() {
   let controls = createElement('ul')
   controls.position(0, 5)
 
-  blossomPicker = createColorPicker(color(300, 55, 85));
+//  blossomPicker = createColorPicker(color(300, 55, 85));
+  blossomPicker = createColorPicker(color(106, 90, 50));
   addToList(controls, 'Blossom colour', blossomPicker);
 
   hueVariation = createSlider(0, 180, 10);
@@ -46,7 +50,7 @@ function setup() {
   blossomAmount = createSlider(0, 255, 60);
   addToList(controls, 'Blossom amount', blossomAmount);
 
-  branchAngles = createSlider(0, 90, 30, 1);
+  branchAngles = createSlider(0, 90, 45, 1);
   addToList(controls, 'Branch angles', branchAngles);
 
   refreshEvery = createSlider(0, 60, 0);
@@ -83,19 +87,23 @@ function draw() {
   // Attempt to fit to 900 x 900.
   scale(min(windowWidth / 900, windowHeight / 900))
   fill(0);
-  branch(prng, blossomPrng, 100, 40, 0);
+  branch(prng, blossomPrng, 100, 40, 0, -1);
 }
 
-function branch(prng, blossomPrng, length, thickness, angle) {
-  if (length < 20) {
+function branch(prng, blossomPrng, length, thickness, angle, branch_sign) {
+  if (thickness < 3) {
    return
   }
   push();
   rotate(angle);
   fill(0);
+
+  let trunk_thickness_factor = 0.8;
+  let branch_thickness_factor = 0.6;
+
   quad(
     0, -length,
-    0.7 * thickness / 2, -length,
+    trunk_thickness_factor * thickness / 2, -length,
     thickness / 2, 0,
     0, 0
   );
@@ -103,7 +111,7 @@ function branch(prng, blossomPrng, length, thickness, angle) {
   if (thickness > 8) {
     fill(255);
     quad(
-     -0.7 * thickness / 2, -length,
+     -trunk_thickness_factor * thickness / 2, -length,
       0, -length,
       0, 0,
       -thickness / 2, 0
@@ -118,19 +126,26 @@ function branch(prng, blossomPrng, length, thickness, angle) {
   angle = branchAngles.value()
 
   branch_length_factor = 0.8;
-  branch_thick_factor = 0.7;
+
+  // Main trunk.
   branch(
     prng,
     blossomPrng,
-    randomSpread(prng, branch_length_factor, 0.1) * length,
-    branch_thick_factor * thickness,
-    randomSpread(prng, -angle, angle / 3));
+    randomSpread(prng, 30, 0.1),
+    trunk_thickness_factor * thickness,
+    randomSpread(prng, 0, 4),
+    branch_sign * -1);
+
+
+  // Branch
   branch(
     prng,
     blossomPrng,
-    randomSpread(prng, branch_length_factor, 0.1) * length,
-    branch_thick_factor * thickness,
-    randomSpread(prng, angle, angle / 3));
+    randomSpread(prng, 3, 0.1) * thickness,
+    branch_thickness_factor * thickness,
+    branch_sign * randomSpread(prng, angle, angle / 3),
+    branch_sign * -1);
+
   pop();
 }
 
