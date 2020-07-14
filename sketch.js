@@ -60,8 +60,8 @@ function setup() {
   addToList(controls, '', button);
 }
 
-let seed = Math.random();
-let t = 0;
+seed = Math.random();
+t = 0;
 
 function draw() {
   if (refreshEvery.value() > 0 && t > refreshEvery.value()) {
@@ -71,8 +71,8 @@ function draw() {
   else {
     t += 1;
   }
-  let prng = new Math.seedrandom(seed);
-  let blossomPrng = new Math.seedrandom(prng.quick());
+  let prng = new alea(seed);
+  let blossomPrng = new alea(prng.quick());
 
   angleMode(DEGREES);
   colorMode(RGB);
