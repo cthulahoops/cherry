@@ -157,7 +157,7 @@ function blossom_patch(prng, count, y0, y1, length) {
 
 window.getPondiverseCreation = () => {
   return {
-    type: "cherry.cthulahoops.org",
+    type: "cherry",
     data: JSON.stringify({
       seed: seed,
       blossomPicker: blossomPicker.color(),
