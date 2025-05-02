@@ -1,4 +1,4 @@
-import { addPondiverseButton } from "https://www.pondiverse.com/script/pondiverse.js";
+import { addPondiverseButton } from "https://www.pondiverse.com/pondiverse.js";
 
 let blossomPicker;
 let hueVariation;
@@ -155,7 +155,11 @@ function blossom_patch(prng, count, y0, y1, length) {
   }
 }
 
-window.getPondiverseCreation = () => {
+function getScreenshot() {
+  return myCanvas?.canvas?.toDataURL("image/png");
+}
+
+addPondiverseButton(() => {
   return {
     type: "cherry",
     data: JSON.stringify({
@@ -167,10 +171,4 @@ window.getPondiverseCreation = () => {
     }),
     image: getScreenshot(),
   };
-};
-
-function getScreenshot() {
-  return myCanvas?.canvas?.toDataURL("image/png");
-}
-
-addPondiverseButton();
+});
